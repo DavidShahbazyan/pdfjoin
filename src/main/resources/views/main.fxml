@@ -18,9 +18,9 @@
         <ImageView fitWidth="200.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="NEVER">
             <Image url="images/mergepdf.png" />
         </ImageView>
-         <JFXListView focusTraversable="false" VBox.vgrow="ALWAYS" />
+         <JFXListView fx:id="fileListView" focusTraversable="false" VBox.vgrow="ALWAYS" />
          <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
-             <JFXButton focusTraversable="false" text="Add">
+             <JFXButton focusTraversable="false" onAction="#addNewFileAction" text="Add">
                  <graphic>
                      <MaterialDesignIconView glyphName="PLUS" size="16" />
                  </graphic>
@@ -28,7 +28,7 @@
                      <Cursor fx:constant="HAND" />
                  </cursor>
              </JFXButton>
-             <JFXButton focusTraversable="false" layoutX="348.0" layoutY="10.0" text="Remove">
+             <JFXButton focusTraversable="false" layoutX="348.0" layoutY="10.0" onAction="#removeSelectedFileAction" text="Remove">
                  <graphic>
                      <MaterialDesignIconView glyphName="MINUS" size="16" />
                  </graphic>
@@ -37,7 +37,7 @@
                  </cursor>
              </JFXButton>
          <Region HBox.hgrow="ALWAYS" />
-         <JFXButton contentDisplay="RIGHT" focusTraversable="false" layoutX="289.0" layoutY="10.0" text="Start">
+         <JFXButton contentDisplay="RIGHT" focusTraversable="false" layoutX="289.0" layoutY="10.0" onAction="#startJoinProcessAction" text="Start">
             <graphic>
                <MaterialDesignIconView glyphName="PLAY" size="16" />
             </graphic>
@@ -51,12 +51,12 @@
       </padding>
      </VBox>
     <VBox fx:id="processIndicatorLayer" alignment="CENTER" spacing="15.0" style="-fx-background-color: rgba(255,255,255,0.5);">
-        <JFXSpinner progress="0.25" radius="25.0">
+        <JFXSpinner fx:id="processIndicatorSpinner" radius="25.0">
             <cursor>
                 <Cursor fx:constant="DEFAULT" />
             </cursor>
         </JFXSpinner>
-        <JFXButton focusTraversable="false" text="Cancel">
+        <JFXButton focusTraversable="false" onAction="#cancelJoinProcessAction" text="Cancel">
             <cursor>
                 <Cursor fx:constant="HAND" />
             </cursor>
