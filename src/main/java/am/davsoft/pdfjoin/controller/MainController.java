@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -46,6 +48,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FILE_CHOOSER.setInitialDirectory(new File(System.getProperty("user.home")));
+        FILE_CHOOSER.setSelectedExtensionFilter(EXTENSION_FILTER);
         processIndicatorLayer.visibleProperty().bind(processRunning);
         processIndicatorLayer.managedProperty().bind(processRunning);
     }
@@ -75,7 +78,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void startJoinProcessAction(ActionEvent event) throws IOException, DocumentException {
-        if (fileListView.getItems().size() > 2) {
+        if (fileListView.getItems().size() >= 2) {
             File file = FILE_CHOOSER.showSaveDialog(((Node) event.getSource()).getScene().getWindow());
             if (file != null) {
                 joinTask = new Task() {
@@ -88,11 +91,18 @@ public class MainController implements Initializable {
                         PdfContentByte pageContentByte = writer.getDirectContent();
                         PdfImportedPage pdfImportedPage;
                         int currentPdfReaderPage = 1;
-                        int totalFilesProcessed = 0;
+                        int totalPagesCount = 0;
+                        int processedPagesCount = 0;
+
+                        List<PdfReader> readersList = new ArrayList<>(fileListView.getItems().size());
 
                         for (File item : fileListView.getItems()) {
-                            FileInputStream fis = new FileInputStream(item);
-                            PdfReader pdfReader = new PdfReader(fis);
+                            PdfReader pdfReader = new PdfReader(item.getPath());
+                            totalPagesCount += pdfReader.getNumberOfPages();
+                            readersList.add(pdfReader);
+                        }
+
+                        for (PdfReader pdfReader : readersList) {
                             while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
                                 document.newPage();
                                 pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
@@ -100,11 +110,11 @@ public class MainController implements Initializable {
                                 currentPdfReaderPage++;
                             }
                             currentPdfReaderPage = 1;
-                            fis.close();
 
-                            totalFilesProcessed++;
-                            updateProgress(totalFilesProcessed, fileListView.getItems().size());
+                            processedPagesCount++;
+                            updateProgress(processedPagesCount, totalPagesCount);
                         }
+
                         outputStream.flush();
                         document.close();
                         outputStream.close();
